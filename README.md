@@ -31,6 +31,7 @@ void create_pokemon(t_pokemon pokemon, BITMAP *buffer){
 
     int validation = 0;
     int resultat;
+    int done = 0;
 
 
     /*** fond ***/
@@ -41,13 +42,7 @@ void create_pokemon(t_pokemon pokemon, BITMAP *buffer){
     /*** fin fond ***/
 
 
-
     while(!key[KEY_ESC]){
-
-
-        //stretch_blit(background, buffer, 0, 0, background->w, background->h, 0, 0, buffer->w, buffer->h);
-        //blit(buffer, screen, 0, 0, 0, 0, buffer->w, buffer->h);
-
 
 
         /************  déroulement des images ************/
@@ -61,6 +56,8 @@ void create_pokemon(t_pokemon pokemon, BITMAP *buffer){
             stretch_sprite(screen, pokemon.pokemon2,SCREEN_W  - SCREEN_W/1.7 , SCREEN_H - SCREEN_H/2,pokemon.pokemon1->w/6 , pokemon.pokemon1->h/6 );
             stretch_sprite(screen, pokemon.pokemon3,SCREEN_W  - SCREEN_W/2.85 , SCREEN_H - SCREEN_H/2,pokemon.pokemon1->w/6 , pokemon.pokemon1->h/6 );
             vsync();
+            rectfill(screen,710 ,300 ,715,450 , makecol(7,22,153));
+            circlefill(screen,712,300,20,makecol(7,22,153));
             rest(100);
             clear_bitmap(screen);
 
@@ -69,6 +66,8 @@ void create_pokemon(t_pokemon pokemon, BITMAP *buffer){
             stretch_sprite(screen, pokemon.pokemon3,SCREEN_W  - SCREEN_W/1.7 , SCREEN_H - SCREEN_H/2,pokemon.pokemon1->w/6 , pokemon.pokemon1->h/6 );
             stretch_sprite(screen, pokemon.pokemon1,SCREEN_W  - SCREEN_W/2.85 , SCREEN_H - SCREEN_H/2,pokemon.pokemon1->w/6 , pokemon.pokemon1->h/6 );
             vsync();
+            rectfill(screen,710 ,300 ,715,450 , makecol(7,22,153) );
+            circlefill(screen,712,300,20,makecol(7,22,153));
             rest(100);
             clear_bitmap(screen);
 
@@ -77,13 +76,21 @@ void create_pokemon(t_pokemon pokemon, BITMAP *buffer){
             stretch_sprite(screen, pokemon.pokemon1,SCREEN_W  - SCREEN_W/1.7 , SCREEN_H - SCREEN_H/2,pokemon.pokemon1->w/6 , pokemon.pokemon1->h/6 );
             stretch_sprite(screen, pokemon.pokemon2,SCREEN_W  - SCREEN_W/2.85 , SCREEN_H - SCREEN_H/2,pokemon.pokemon1->w/6 , pokemon.pokemon1->h/6 );
             vsync();
+            rectfill(screen,710 ,300 ,715,450 , makecol(7,22,153) );
+            circlefill(screen,712,300,20,makecol(7,22,153));
             rest(100);
             clear_bitmap(screen);
+
+
         }
 
         /************ condition pour tirage ************/
 
-        if (key[KEY_UP]){
+        if(mouse_b & 2 || mouse_b & 1) {
+            for(int i = 300; i < 450 ; i = i + 50){
+                circlefill(screen, 712, i, 20, makecol(7, 22, 153));
+                rest(10);
+            }
             validation = 1;
         }
 
@@ -119,20 +126,21 @@ void create_pokemon(t_pokemon pokemon, BITMAP *buffer){
             }
             if (gen3 == 1){
                 stretch_sprite(screen, pokemon.pokemon2,SCREEN_W  - SCREEN_W/2.85 , SCREEN_H - SCREEN_H/2,pokemon.pokemon1->w/6 , pokemon.pokemon1->h/6 );
-            } 
+            }
             if (gen3 == 2){
                 stretch_sprite(screen, pokemon.pokemon3,SCREEN_W  - SCREEN_W/2.85 , SCREEN_H - SCREEN_H/2,pokemon.pokemon1->w/6 , pokemon.pokemon1->h/6 );
             }
+            rectfill(screen,710 ,300 ,715,450 , makecol(7,22,153) );
+            circlefill(screen,712,450,20,makecol(7,22,153));
             validation = 2;
         }
         /************  resultat ************/
-        if(validation == 2){
-            if(gen1 == gen2 && gen1 == gen3 && gen2 == gen3){
-                textprintf_ex(screen, font, SCREEN_W  - SCREEN_W/1.92, 450,makecol(7,22,153),-1, "gagne");
+        if(validation == 2) {
+            if (gen1 == gen2 && gen1 == gen3 && gen2 == gen3) {
+                textprintf_ex(screen, font, SCREEN_W - SCREEN_W / 1.92, 450, makecol(7, 22, 153), -1, "gagne");
                 //resultat = 0;
-            }
-            else{
-                textprintf_ex(screen, font, SCREEN_W  - SCREEN_W/1.92, 450,makecol(7,22,153),-1, "perdu");
+            } else {
+                textprintf_ex(screen, font, SCREEN_W - SCREEN_W / 1.92, 450, makecol(7, 22, 153), -1, "perdu");
                 //resultat = 1;
             }
         }
