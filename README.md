@@ -11,86 +11,131 @@ typedef struct pokemons{
 
 }t_pokemon;
 
-/*void load_pokemon(t_pokemon* pokemon, BITMAP** buffer){
-    *buffer = create_bitmap(SCREEN_W, SCREEN_H);
-    pokemon->pokemon1 = create_bitmap(800, 600);
-    pokemon->pokemon1 = load_bitmap("pokemon1.bmp", NULL);
-    pokemon->pokemon2 = create_bitmap(800, 600);
-    pokemon->pokemon2 = load_bitmap("pokemon2.bmp", NULL);
-    pokemon->pokemon3 = create_bitmap(800, 600);
-    pokemon->pokemon3 = load_bitmap("pokemon3.bmp", NULL);
-}*/
 
 
 void create_pokemon(t_pokemon pokemon, BITMAP *buffer){
 
     buffer = create_bitmap(SCREEN_W, SCREEN_H);
     pokemon.pokemon1 = create_bitmap(800, 600);
-    pokemon.pokemon1 = load_bitmap("pokemon1.bmp", NULL);
+    pokemon.pokemon1 = load_bitmap("pokemon1_mag.bmp", NULL);
     pokemon.pokemon2 = create_bitmap(800, 600);
-    pokemon.pokemon2 = load_bitmap("pokemon2.bmp", NULL);
+    pokemon.pokemon2 = load_bitmap("pokemon2_mag.bmp", NULL);
     pokemon.pokemon3 = create_bitmap(800, 600);
-    pokemon.pokemon3 = load_bitmap("pokemon3.bmp", NULL);
+    pokemon.pokemon3 = load_bitmap("pokemon3_mag.bmp", NULL);
+
 
     int gen1, gen2, gen3;
     gen1 = rand()%3;
     gen2 = rand()%3;
     gen3 = rand()%3;
 
+    int validation = 0;
+    int resultat;
+
+
+    /*** fond ***/
+
+    BITMAP* background = create_bitmap(800, 600);
+    background = load_bitmap("vfond1.bmp", NULL);
+
+    /*** fin fond ***/
+
+
 
     while(!key[KEY_ESC]){
 
 
-        /***** gen 1 ******/
-        if (gen1 == 0){
+        //stretch_blit(background, buffer, 0, 0, background->w, background->h, 0, 0, buffer->w, buffer->h);
+        //blit(buffer, screen, 0, 0, 0, 0, buffer->w, buffer->h);
 
-            stretch_blit(pokemon.pokemon1, buffer, 0, 0, pokemon.pokemon1->w, pokemon.pokemon1->h, SCREEN_W  - SCREEN_W/1.22, SCREEN_H - SCREEN_H/2, pokemon.pokemon1->w/6, pokemon.pokemon1->h/6);
-            blit(buffer, screen, 0, 0, 0, 0, pokemon.pokemon1->w, pokemon.pokemon1->w);
-        }
-        if (gen1 == 1){
 
-            stretch_blit(pokemon.pokemon2, buffer, 0, 0, pokemon.pokemon2->w, pokemon.pokemon2->h, SCREEN_W - SCREEN_W/1.22, SCREEN_H - SCREEN_H/2, pokemon.pokemon1->w/6, pokemon.pokemon1->h/6);
-            blit(buffer, screen, 0, 0, 0, 0, pokemon.pokemon2->w, pokemon.pokemon2->w);
-        }
-        if (gen1 == 2){
 
-            stretch_blit(pokemon.pokemon3, buffer, 0, 0, pokemon.pokemon3->w, pokemon.pokemon3->h, SCREEN_W - SCREEN_W/1.22, SCREEN_H - SCREEN_H/2, pokemon.pokemon1->w/6, pokemon.pokemon1->h/6);
-            blit(buffer, screen, 0, 0, 0, 0, pokemon.pokemon3->w, pokemon.pokemon3->w);
-        }
-        /***** gen 2 ******/
-        if (gen2 == 0){
+        /************  déroulement des images ************/
+        if(validation == 0){
 
-            stretch_blit(pokemon.pokemon1, buffer, 0, 0, pokemon.pokemon1->w, pokemon.pokemon1->h, SCREEN_W  - SCREEN_W/1.7, SCREEN_H - SCREEN_H/2, pokemon.pokemon1->w/6, pokemon.pokemon1->h/6);
-            blit(buffer, screen, 0, 0, 0, 0, pokemon.pokemon1->w, pokemon.pokemon1->w);
-        }
-        if (gen2 == 1){
 
-            stretch_blit(pokemon.pokemon2, buffer, 0, 0, pokemon.pokemon2->w, pokemon.pokemon2->h, SCREEN_W - SCREEN_W/1.7, SCREEN_H - SCREEN_H/2, pokemon.pokemon1->w/6, pokemon.pokemon1->h/6);
-            blit(buffer, screen, 0, 0, 0, 0, pokemon.pokemon2->w, pokemon.pokemon2->w);
-        }
-        if (gen2 == 2){
+            clear_bitmap(screen);
 
-            stretch_blit(pokemon.pokemon3, buffer, 0, 0, pokemon.pokemon3->w, pokemon.pokemon3->h, SCREEN_W - SCREEN_W/1.7, SCREEN_H - SCREEN_H/2, pokemon.pokemon1->w/6, pokemon.pokemon1->h/6);
-            blit(buffer, screen, 0, 0, 0, 0, pokemon.pokemon3->w, pokemon.pokemon3->w);
-        }
-        /***** gen 3 ******/
-        if (gen3 == 0){
+            stretch_sprite(screen, background,0, 0,SCREEN_W , SCREEN_H );
+            stretch_sprite(screen, pokemon.pokemon1,SCREEN_W  - SCREEN_W/1.15 , SCREEN_H - SCREEN_H/2,pokemon.pokemon1->w/6 , pokemon.pokemon1->h/6 );
+            stretch_sprite(screen, pokemon.pokemon2,SCREEN_W  - SCREEN_W/1.7 , SCREEN_H - SCREEN_H/2,pokemon.pokemon1->w/6 , pokemon.pokemon1->h/6 );
+            stretch_sprite(screen, pokemon.pokemon3,SCREEN_W  - SCREEN_W/2.85 , SCREEN_H - SCREEN_H/2,pokemon.pokemon1->w/6 , pokemon.pokemon1->h/6 );
+            vsync();
+            rest(100);
+            clear_bitmap(screen);
 
-            stretch_blit(pokemon.pokemon1, buffer, 0, 0, pokemon.pokemon1->w, pokemon.pokemon1->h, SCREEN_W  - SCREEN_W/2.85, SCREEN_H - SCREEN_H/2, pokemon.pokemon1->w/6, pokemon.pokemon1->h/6);
-            blit(buffer, screen, 0, 0, 0, 0, pokemon.pokemon1->w, pokemon.pokemon1->w);
-        }
-        if (gen3 == 1){
+            stretch_sprite(screen, background,0, 0,SCREEN_W , SCREEN_H );
+            stretch_sprite(screen, pokemon.pokemon2,SCREEN_W  - SCREEN_W/1.15 , SCREEN_H - SCREEN_H/2,pokemon.pokemon1->w/6 , pokemon.pokemon1->h/6 );
+            stretch_sprite(screen, pokemon.pokemon3,SCREEN_W  - SCREEN_W/1.7 , SCREEN_H - SCREEN_H/2,pokemon.pokemon1->w/6 , pokemon.pokemon1->h/6 );
+            stretch_sprite(screen, pokemon.pokemon1,SCREEN_W  - SCREEN_W/2.85 , SCREEN_H - SCREEN_H/2,pokemon.pokemon1->w/6 , pokemon.pokemon1->h/6 );
+            vsync();
+            rest(100);
+            clear_bitmap(screen);
 
-            stretch_blit(pokemon.pokemon2, buffer, 0, 0, pokemon.pokemon2->w, pokemon.pokemon2->h, SCREEN_W - SCREEN_W/2.85, SCREEN_H - SCREEN_H/2, pokemon.pokemon1->w/6, pokemon.pokemon1->h/6);
-            blit(buffer, screen, 0, 0, 0, 0, pokemon.pokemon2->w, pokemon.pokemon2->w);
-        }
-        if (gen3 == 2){
-
-            stretch_blit(pokemon.pokemon3, buffer, 0, 0, pokemon.pokemon3->w, pokemon.pokemon3->h, SCREEN_W - SCREEN_W/2.85, SCREEN_H - SCREEN_H/2, pokemon.pokemon1->w/6, pokemon.pokemon1->h/6);
-            blit(buffer, screen, 0, 0, 0, 0, pokemon.pokemon3->w, pokemon.pokemon3->w);
+            stretch_sprite(screen, background,0, 0,SCREEN_W , SCREEN_H );
+            stretch_sprite(screen, pokemon.pokemon3,SCREEN_W  - SCREEN_W/1.15 , SCREEN_H - SCREEN_H/2,pokemon.pokemon1->w/6 , pokemon.pokemon1->h/6 );
+            stretch_sprite(screen, pokemon.pokemon1,SCREEN_W  - SCREEN_W/1.7 , SCREEN_H - SCREEN_H/2,pokemon.pokemon1->w/6 , pokemon.pokemon1->h/6 );
+            stretch_sprite(screen, pokemon.pokemon2,SCREEN_W  - SCREEN_W/2.85 , SCREEN_H - SCREEN_H/2,pokemon.pokemon1->w/6 , pokemon.pokemon1->h/6 );
+            vsync();
+            rest(100);
+            clear_bitmap(screen);
         }
 
+        /************ condition pour tirage ************/
 
+        if (key[KEY_UP]){
+            validation = 1;
+        }
+
+        /************  generation des 3 images ************/
+        if(validation == 1){
+
+            clear_bitmap(screen);
+            stretch_sprite(screen, background,0, 0,SCREEN_W , SCREEN_H );
+
+            /***** gen 1 ******/
+            if (gen1 == 0){
+               stretch_sprite(screen, pokemon.pokemon1,SCREEN_W  - SCREEN_W/1.15 , SCREEN_H - SCREEN_H/2,pokemon.pokemon1->w/6 , pokemon.pokemon1->h/6 );
+            }
+            if (gen1 == 1){
+                stretch_sprite(screen, pokemon.pokemon2,SCREEN_W  - SCREEN_W/1.15 , SCREEN_H - SCREEN_H/2,pokemon.pokemon1->w/6 , pokemon.pokemon1->h/6 );
+            }
+            if (gen1 == 2){
+                stretch_sprite(screen, pokemon.pokemon3,SCREEN_W  - SCREEN_W/1.15, SCREEN_H - SCREEN_H/2,pokemon.pokemon1->w/6 , pokemon.pokemon1->h/6 );
+            }
+            /***** gen 2 ******/
+            if (gen2 == 0){
+                stretch_sprite(screen, pokemon.pokemon1,SCREEN_W  - SCREEN_W/1.7 , SCREEN_H - SCREEN_H/2,pokemon.pokemon1->w/6 , pokemon.pokemon1->h/6 );
+            }
+            if (gen2 == 1){
+                stretch_sprite(screen, pokemon.pokemon2,SCREEN_W  - SCREEN_W/1.7 , SCREEN_H - SCREEN_H/2,pokemon.pokemon1->w/6 , pokemon.pokemon1->h/6 );
+            }
+            if (gen2 == 2){
+                stretch_sprite(screen, pokemon.pokemon3,SCREEN_W  - SCREEN_W/1.7 , SCREEN_H - SCREEN_H/2,pokemon.pokemon1->w/6 , pokemon.pokemon1->h/6 );
+            }
+            /***** gen 3 ******/
+            if (gen3 == 0){
+                stretch_sprite(screen, pokemon.pokemon1,SCREEN_W  - SCREEN_W/2.85 , SCREEN_H - SCREEN_H/2,pokemon.pokemon1->w/6 , pokemon.pokemon1->h/6 );
+            }
+            if (gen3 == 1){
+                stretch_sprite(screen, pokemon.pokemon2,SCREEN_W  - SCREEN_W/2.85 , SCREEN_H - SCREEN_H/2,pokemon.pokemon1->w/6 , pokemon.pokemon1->h/6 );
+            } 
+            if (gen3 == 2){
+                stretch_sprite(screen, pokemon.pokemon3,SCREEN_W  - SCREEN_W/2.85 , SCREEN_H - SCREEN_H/2,pokemon.pokemon1->w/6 , pokemon.pokemon1->h/6 );
+            }
+            validation = 2;
+        }
+        /************  resultat ************/
+        if(validation == 2){
+            if(gen1 == gen2 && gen1 == gen3 && gen2 == gen3){
+                textprintf_ex(screen, font, SCREEN_W  - SCREEN_W/1.92, 450,makecol(7,22,153),-1, "gagne");
+                //resultat = 0;
+            }
+            else{
+                textprintf_ex(screen, font, SCREEN_W  - SCREEN_W/1.92, 450,makecol(7,22,153),-1, "perdu");
+                //resultat = 1;
+            }
+        }
     }
 }
 
@@ -104,12 +149,24 @@ int main() {
         exit(EXIT_FAILURE);
     }
     install_keyboard();
+    install_mouse();
+
     srand(time(NULL));
 
     t_pokemon pokemon;
     BITMAP* buffer;
-    BITMAP * buffer2;
+
+
+    vsync();
+
     create_pokemon(pokemon,buffer);
+
+
+
+    destroy_bitmap(pokemon.pokemon1);
+    destroy_bitmap(pokemon.pokemon2);
+    destroy_bitmap(pokemon.pokemon3);
+
 
     return 0;
 
