@@ -1,4 +1,7 @@
 # git_sample_cours_Vig
+/***********************************************************************************/
+/************************************* JACKPOT *************************************/
+/***********************************************************************************/
 
 #include <stdio.h>
 #include <allegro.h>
@@ -13,9 +16,8 @@ typedef struct pokemons{
 
 
 
-void create_pokemon(t_pokemon pokemon, BITMAP *buffer){
+void create_pokemon(t_pokemon pokemon){
 
-    buffer = create_bitmap(SCREEN_W, SCREEN_H);
     pokemon.pokemon1 = create_bitmap(800, 600);
     pokemon.pokemon1 = load_bitmap("pokemon1_mag.bmp", NULL);
     pokemon.pokemon2 = create_bitmap(800, 600);
@@ -31,9 +33,7 @@ void create_pokemon(t_pokemon pokemon, BITMAP *buffer){
 
     int validation = 0;
     int resultat;
-    int done = 0;
-
-
+   
     /*** fond ***/
 
     BITMAP* background = create_bitmap(800, 600);
@@ -47,8 +47,7 @@ void create_pokemon(t_pokemon pokemon, BITMAP *buffer){
 
         /************  déroulement des images ************/
         if(validation == 0){
-
-
+            
             clear_bitmap(screen);
 
             stretch_sprite(screen, background,0, 0,SCREEN_W , SCREEN_H );
@@ -80,8 +79,6 @@ void create_pokemon(t_pokemon pokemon, BITMAP *buffer){
             circlefill(screen,712,300,20,makecol(7,22,153));
             rest(100);
             clear_bitmap(screen);
-
-
         }
 
         /************ condition pour tirage ************/
@@ -89,7 +86,7 @@ void create_pokemon(t_pokemon pokemon, BITMAP *buffer){
         if(mouse_b & 2 || mouse_b & 1) {
             for(int i = 300; i < 450 ; i = i + 50){
                 circlefill(screen, 712, i, 20, makecol(7, 22, 153));
-                rest(10);
+                rest(1);
             }
             validation = 1;
         }
@@ -158,26 +155,15 @@ int main() {
     }
     install_keyboard();
     install_mouse();
-
     srand(time(NULL));
-
     t_pokemon pokemon;
-    BITMAP* buffer;
 
-
+    create_pokemon(pokemon);
     vsync();
-
-    create_pokemon(pokemon,buffer);
-
-
 
     destroy_bitmap(pokemon.pokemon1);
     destroy_bitmap(pokemon.pokemon2);
     destroy_bitmap(pokemon.pokemon3);
-
-
     return 0;
-
-
 }END_OF_MAIN();
 
