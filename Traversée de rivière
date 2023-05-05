@@ -1,0 +1,136 @@
+/**********************************************************************************************/ 
+/************************************ Traversée de rivière ************************************/
+/**********************************************************************************************/
+
+#include <stdio.h>
+#include <allegro.h>
+
+
+typedef struct rondin{
+    BITMAP * wood;
+    int rondin_x[10];
+    int rondin_y[10];
+}t_rondin;
+
+typedef struct personnage
+{
+    BITMAP* perso1;
+    BITMAP* perso2;
+    int perso1_x, perso1_y;
+    int perso2_x, perso2_y;
+
+}t_personnage;
+
+void create_rondin(t_rondin rondin, t_personnage perso){
+
+    rondin.wood = create_bitmap(800, 600);
+    rondin.wood = load_bitmap( "rondin.bmp", NULL);
+    perso.perso1 = create_bitmap(800,600);
+    perso.perso1 = load_bitmap("perso1_milieu.bmp", NULL);
+    perso.perso2 = create_bitmap(800,600);
+    perso.perso2 = load_bitmap("perso2_milieu.bmp", NULL);
+
+
+
+    /***** position x rondins aléatoire *****/
+    for(int i = 0; i < 10; i++){
+        rondin.rondin_x[i] = rand()% 750;
+    }
+
+
+    /***** background *****/
+    BITMAP* background = create_bitmap(800, 600);
+    background = load_bitmap("vfond1.bmp", NULL);
+
+
+    /***** position de départ *****/
+    perso.perso2_x = 400;
+    perso.perso2_y = 530;
+    perso.perso1_x = 360;
+    perso.perso1_y = 530;
+
+
+    /***** position y rondins *****/
+    rondin.rondin_y[0] = 490;
+    for(int i = 1; i < 10; i++){
+        rondin.rondin_y[i]= rondin.rondin_y[i-1] - 40 ;
+    }
+
+    int vitesse = 10;
+    int acceleration = 2;
+
+
+    while(! key[KEY_ESC]){
+
+        /***** déplacement rondins *****/
+        for(int i = 0; i < 10; i ++){
+            if(rondin.rondin_x[i] < 750){
+                vitesse = vitesse + acceleration;
+                rondin.rondin_x[i] = rondin.rondin_x[i] + vitesse ;
+            }
+            if(rondin.rondin_x[i] >= 750){
+                rondin.rondin_x[i] = 0;
+                vitesse = 10;
+                acceleration = 2;
+            }
+        }
+
+        /***** déplacement joueur *****/
+        if(key[KEY_UP]){
+            perso.perso2_y = perso.perso2_y - 40;
+        }
+        if(key[KEY_SPACE]){
+            perso.perso1_y = perso.perso1_y - 40;
+        }
+
+
+        /***** déplacement joueur x rondins *****/
+        for(int i = 0; i < 10; i++){
+            if(rondin.rondin_y[i] == perso.perso1_y && perso.perso1_x >= rondin.rondin_x[i] && perso.perso1_x <= rondin.rondin_x[i] + rondin.wood->w)  {
+                perso.perso1_x = rondin.rondin_x[i];
+            }
+        }
+        for(int i = 0; i < 10; i++){
+            if(rondin.rondin_y[i] == perso.perso2_y && perso.perso2_x >= rondin.rondin_x[i] && perso.perso2_x >= rondin.rondin_x[i] +  rondin.wood->w){
+                perso.perso2_x = rondin.rondin_x[i];
+            }
+        }
+
+
+
+
+        clear_bitmap(screen);
+        stretch_sprite(screen, background,0, 0,SCREEN_W , SCREEN_H );
+        for(int i = 0; i < 8; i++){
+            stretch_sprite(screen, rondin.wood, rondin.rondin_x[i], rondin.rondin_y[i], rondin.wood->w/4, rondin.wood->h/4);
+        }
+
+        stretch_sprite(screen,  perso.perso1, perso.perso1_x, perso.perso1_y,perso.perso1->w/4, perso.perso1->h/4);
+        stretch_sprite(screen,  perso.perso2, perso.perso2_x, perso.perso2_y,perso.perso1->w/4, perso.perso1->h/4);
+        rest(1000);
+
+    }
+
+
+}
+
+int main() {
+    allegro_init();
+    set_color_depth(desktop_color_depth());
+    if ((set_gfx_mode(GFX_AUTODETECT_WINDOWED, 800, 600, 0, 0)) != 0) {
+        allegro_message("Pb de mode graphique");
+        allegro_exit();
+        exit(EXIT_FAILURE);
+    }
+    install_keyboard();
+    install_mouse();
+    srand(time(NULL));
+
+    t_rondin rondin;
+    t_personnage perso;
+
+    create_rondin(rondin, perso);
+
+    destroy_bitmap(rondin.wood);
+    return 0;
+}END_OF_MAIN();
