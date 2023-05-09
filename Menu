@@ -1,0 +1,283 @@
+#include <stdio.h>
+#include <allegro.h>
+#define nbr_jeux 10
+
+
+
+typedef struct personnage_principal
+{
+    BITMAP* bas1[3];
+    BITMAP* gauche1[3];
+    BITMAP* droite1[3];
+    BITMAP* haut1[3];
+    BITMAP* bas2[3];
+    BITMAP* gauche2[3];
+    BITMAP* droite2[3];
+    BITMAP* haut2[3];
+    int x1, y1, x2, y2;
+    int direction1, direction2;
+    int frame1, frame2;
+    int en_deplacement1, en_deplacement2;
+}t_personnage_principal;
+
+
+void dessiner_personnage(t_personnage_principal* personnage_principal, BITMAP* buffer)
+{
+    BITMAP* frame1;
+    BITMAP* frame2;
+    /***** perso 1 *****/
+    switch (personnage_principal->direction1) {
+        case 0:
+            frame1 = personnage_principal->bas1[personnage_principal->frame1];
+            break;
+        case 1:
+            frame1 = personnage_principal->gauche1[personnage_principal->frame1];
+            break;
+        case 2:
+            frame1 = personnage_principal->droite1[personnage_principal->frame1];
+            break;
+        case 3:
+            frame1 = personnage_principal->haut1[personnage_principal->frame1];
+            break;
+    }
+    /***** perso 2 *****/
+    switch (personnage_principal->direction2) {
+        case 0:
+            frame2 = personnage_principal->bas2[personnage_principal->frame2];
+            break;
+        case 1:
+            frame2 = personnage_principal->gauche2[personnage_principal->frame2];
+            break;
+        case 2:
+            frame2 = personnage_principal->droite2[personnage_principal->frame2];
+            break;
+        case 3:
+            frame2 = personnage_principal->haut2[personnage_principal->frame2];
+            break;
+    }
+    masked_stretch_blit(frame1, buffer, 0, 0, frame1->w, frame1->h,personnage_principal->x1, personnage_principal->y1, frame1->w/2, frame1->h/2);
+    masked_stretch_blit(frame2, buffer, 0, 0, frame2->w, frame2->h,personnage_principal->x2, personnage_principal->y2, frame2->w/2, frame2->h/2);
+
+
+
+}
+
+
+void maj_personnage(t_personnage_principal* personnage_principal)
+{
+
+    int vitesse = 7;
+    /***** perso 1 *****/
+    personnage_principal->en_deplacement1 = 0;
+    if (key[KEY_Z]) {
+        personnage_principal->y1-= vitesse;
+        personnage_principal->direction1 = 3;
+        personnage_principal->en_deplacement1 = 1;
+
+    }
+    if (key[KEY_W]) {
+        personnage_principal->y1 += vitesse;
+        personnage_principal->direction1 = 0;
+        personnage_principal->en_deplacement1 = 1;
+    }
+    if (key[KEY_Q]) {
+        personnage_principal->x1 -= vitesse;
+        personnage_principal->direction1 = 1;
+        personnage_principal->en_deplacement1 = 1;
+    }
+    if (key[KEY_D]) {
+        personnage_principal->x1 += vitesse;
+        personnage_principal->direction1 = 2;
+        personnage_principal->en_deplacement1 = 1;
+    }
+
+    /***** perso 2 *****/
+    personnage_principal->en_deplacement2 = 0;
+    if (key[KEY_UP]) {
+        personnage_principal->y2-= vitesse;
+        personnage_principal->direction2 = 3;
+        personnage_principal->en_deplacement2 = 1;
+    }
+    if (key[KEY_DOWN]) {
+        personnage_principal->y2 += vitesse;
+        personnage_principal->direction2 = 0;
+        personnage_principal->en_deplacement2 = 1;
+    }
+    if (key[KEY_LEFT]) {
+        personnage_principal->x2 -= vitesse;
+        personnage_principal->direction2 = 1;
+        personnage_principal->en_deplacement2 = 1;
+    }
+    if (key[KEY_RIGHT]) {
+        personnage_principal->x2 += vitesse;
+        personnage_principal->direction2 = 2;
+        personnage_principal->en_deplacement2 = 1;
+    }
+
+
+}
+
+void afficher_image(t_personnage_principal* personnage_principal){
+
+
+    /***** perso 1 *****/
+
+    personnage_principal->bas1[0] = load_bitmap("face_droite1.bmp",NULL);
+    personnage_principal->bas1[1] = load_bitmap("face_milieu1.bmp",NULL);
+    personnage_principal->bas1[2] = load_bitmap("face_gauche1.bmp",NULL);
+
+
+    personnage_principal->haut1[0] = load_bitmap("dos_droite1.bmp",NULL);
+    personnage_principal->haut1[1] = load_bitmap("dos_milieu1.bmp",NULL);
+    personnage_principal->haut1[2] = load_bitmap("dos_gauche1.bmp",NULL);
+
+
+    personnage_principal->droite1[0] = load_bitmap("droite_droite1.bmp",NULL);
+    personnage_principal->droite1[1] = load_bitmap("droite_milieu1.bmp",NULL);
+    personnage_principal->droite1[2] = load_bitmap("droite_gauche1.bmp",NULL);
+
+
+    personnage_principal->gauche1[0] = load_bitmap("gauche_droite1.bmp",NULL);
+    personnage_principal->gauche1[1] = load_bitmap("gauche_milieu1.bmp",NULL);
+    personnage_principal->gauche1[2] = load_bitmap("gauche_gauche1.bmp",NULL);
+
+
+
+
+    /***** perso 2 *****/
+
+    personnage_principal->bas2[0] = load_bitmap("face_droite2.bmp",NULL);
+    personnage_principal->bas2[1] = load_bitmap("face_milieu2.bmp",NULL);
+    personnage_principal->bas2[2] = load_bitmap("face_gauche2.bmp",NULL);
+
+
+
+    personnage_principal->haut2[0] = load_bitmap("dos_droite2.bmp",NULL);
+    personnage_principal->haut2[1] = load_bitmap("dos_milieu2.bmp",NULL);
+    personnage_principal->haut2[2] = load_bitmap("dos_gauche2.bmp",NULL);
+
+
+    personnage_principal->droite2[0] = load_bitmap("droite_droite2.bmp",NULL);
+    personnage_principal->droite2[1] = load_bitmap("droite_milieu2.bmp",NULL);
+    personnage_principal->droite2[2] = load_bitmap("droite_gauche2.bmp",NULL);
+
+
+    personnage_principal->gauche2[0] = load_bitmap("gauche_droite2.bmp",NULL);
+    personnage_principal->gauche2[1] = load_bitmap("gauche_milieu2.bmp",NULL);
+    personnage_principal->gauche2[2] = load_bitmap("gauche_gauche2.bmp",NULL);
+
+
+}
+
+int aller_jeu(t_personnage_principal* personnage_principal)
+{
+    int jeux[nbr_jeux][4] = {
+            {192, 374, 260, 480},
+            {263, 334, 324, 390},
+            {751, 375, 798, 409},
+            {485, 523, 536, 553},
+            {219, 589, 268, 619},
+            {68,  719, 129, 748},
+            {218, 717, 269, 748},
+            {372, 722, 423, 749},
+            {440, 739, 488, 761},
+            {602 ,735, 647, 762}
+    };
+    for(int i = 0; i < nbr_jeux; i++){
+        if(personnage_principal->x1 >= jeux[i][0] && personnage_principal->x1 <= jeux[i][2] && personnage_principal->y1 >= jeux[i][1] && personnage_principal->y1 <= jeux[i][3]){
+            return i;
+        }
+    }
+    return -1;
+
+}
+
+int main() {
+    allegro_init();
+    install_keyboard();
+
+    set_color_depth(32);
+    set_gfx_mode(GFX_AUTODETECT_WINDOWED, 640, 480, 0, 0);
+
+    BITMAP *buffer = create_bitmap(SCREEN_W, SCREEN_H);
+
+    BITMAP *backgroundprincipal = load_bitmap("backgroundprincipal.bmp", NULL);
+    if (!backgroundprincipal) {
+        allegro_message("Erreur lors du chargement de 'background.bmp'\n");
+        return 1;
+    }
+
+
+
+    t_personnage_principal personnage_principal;
+    personnage_principal.direction1 = 0;
+    personnage_principal.frame1 = 0;
+    personnage_principal.x1 = SCREEN_W/5;
+    personnage_principal.y1 = SCREEN_H/5;
+
+    personnage_principal.direction2 = 0;
+    personnage_principal.frame2 = 0;
+    personnage_principal.x2 = SCREEN_W/2;
+    personnage_principal.y2 = SCREEN_H/2;
+
+
+
+
+
+
+
+    int frame_counter = 0;
+
+    while (!key[KEY_ESC]) {
+
+        maj_personnage(&personnage_principal);
+
+        //stretch_sprite(screen, backgroundprincipal,0, 0,SCREEN_W , SCREEN_H );
+        stretch_blit(backgroundprincipal, buffer, 0, 0, backgroundprincipal->w, backgroundprincipal->h, 0, 0, buffer->w, buffer->h);
+        //rest(10000);
+
+        afficher_image( &personnage_principal);
+        dessiner_personnage(&personnage_principal, buffer);
+
+
+        blit(buffer, screen, 0, 0, 0, 0, buffer->w, buffer->h);
+
+
+        frame_counter++;
+
+
+        if (frame_counter >= 10) {
+            if (personnage_principal.en_deplacement1) {
+                personnage_principal.frame1 = (personnage_principal.frame1 + 1) % 3;
+            } else {
+                personnage_principal.frame1 = 0;
+            }
+            if (personnage_principal.en_deplacement2) {
+                personnage_principal.frame2 = (personnage_principal.frame2 + 1) % 3;
+            } else {
+                personnage_principal.frame2 = 0;
+            }
+            frame_counter = 0;
+        }
+
+        rest(100);
+    }
+
+    for (int i = 0; i < 3; i++) {
+        destroy_bitmap(personnage_principal.bas1[i]);
+        destroy_bitmap(personnage_principal.gauche1[i]);
+        destroy_bitmap(personnage_principal.droite1[i]);
+        destroy_bitmap(personnage_principal.haut1[i]);
+
+        destroy_bitmap(personnage_principal.bas2[i]);
+        destroy_bitmap(personnage_principal.gauche2[i]);
+        destroy_bitmap(personnage_principal.droite2[i]);
+        destroy_bitmap(personnage_principal.haut2[i]);
+    }
+
+    destroy_bitmap(backgroundprincipal);
+    destroy_bitmap(buffer);
+
+    return 0;
+}
+END_OF_MAIN();
