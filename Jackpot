@@ -16,7 +16,7 @@ typedef struct generateur_tirage{
     int gen1, gen2, gen3;
 }t_generateur_tirage;
 
-void deroulement_image (t_pokemon_jackpot  * pokemon, BITMAP* buffer){
+void deroulement_image_jackpot (t_pokemon_jackpot  * pokemon, BITMAP* buffer){
 
     BITMAP* background = load_bitmap("vfond1.bmp", NULL);
     if(pokemon->validation  == 0){
@@ -57,7 +57,7 @@ void deroulement_image (t_pokemon_jackpot  * pokemon, BITMAP* buffer){
     }
 }
 
-void detection_arret (t_pokemon_jackpot  * pokemon, BITMAP* buffer){
+void detection_arret_jackpot (t_pokemon_jackpot  * pokemon, BITMAP* buffer){
     if(mouse_b & 2 || mouse_b & 1) {
         for(int i = 300; i < 450 ; i = i + 50){
             circlefill(buffer, 712, i, 20, makecol(7, 22, 153));
@@ -68,13 +68,13 @@ void detection_arret (t_pokemon_jackpot  * pokemon, BITMAP* buffer){
 }
 
 
-void generateur_tirage(t_generateur_tirage * generateur){
+void generateur_tirage_jackpot(t_generateur_tirage * generateur){
     generateur->gen1 = rand()%3;
     generateur->gen2 = rand()%3;
     generateur->gen3 = rand()%3;
 }
 
-void generateur_3_images (t_pokemon_jackpot  * pokemon, BITMAP* buffer,t_generateur_tirage * generateur){
+void generateur_3_images_jackpot (t_pokemon_jackpot  * pokemon, BITMAP* buffer,t_generateur_tirage * generateur){
     BITMAP* background = load_bitmap("vfond1.bmp", NULL);
 
     if(pokemon->validation  == 1){
@@ -117,7 +117,7 @@ void generateur_3_images (t_pokemon_jackpot  * pokemon, BITMAP* buffer,t_generat
 
     }
 }
-void resultat_tirage (t_pokemon_jackpot  * pokemon, BITMAP* buffer, t_generateur_tirage  * generateur){
+void resultat_tirage_jackpot (t_pokemon_jackpot  * pokemon, BITMAP* buffer, t_generateur_tirage  * generateur){
 
 
 
@@ -150,15 +150,15 @@ void jackpot(t_pokemon_jackpot * pokemon, BITMAP* buffer, t_generateur_tirage * 
         buffer = create_bitmap(SCREEN_W, SCREEN_H);
         pokemon->validation = 0;
         charger_bitmap_jackpot (pokemon);
-        generateur_tirage(generateur);
+        generateur_tirage_jackpot(generateur);
 
 
         while(!key[KEY_ESC]){
-            deroulement_image( pokemon, buffer);
-            detection_arret (pokemon, buffer);
-            generateur_3_images (pokemon, buffer, generateur);
+            deroulement_image_jackpot( pokemon, buffer);
+            detection_arret_jackpot (pokemon, buffer);
+            generateur_3_images_jackpot (pokemon, buffer, generateur);
 
-            resultat_tirage ( pokemon, buffer, generateur);
+            resultat_tirage_jackpot ( pokemon, buffer, generateur);
         }
 }
 
