@@ -4,211 +4,152 @@
 
 #include <stdio.h>
 #include <allegro.h>
-#include <math.h>
-
 
 typedef struct rondin{
     BITMAP * wood;
     int rondin_x[10];
     int rondin_y[10];
+    int x[10], y[10];
+    int vitesse, acceleration;
 }t_rondin;
 
-typedef struct personnage
+typedef struct personnage_traversee
 {
     BITMAP* perso1;
     BITMAP* perso2;
     int perso1_x, perso1_y;
     int perso2_x, perso2_y;
 
-}t_personnage;
+}t_personnage_traversee;
 
 
-
-void create_rondin(t_rondin rondin, t_personnage perso){
-
-    rondin.wood = create_bitmap(800, 600);
-    rondin.wood = load_bitmap( "rondin.bmp", NULL);
-    perso.perso1 = create_bitmap(800,600);
-    perso.perso1 = load_bitmap("perso1_milieu.bmp", NULL);
-    perso.perso2 = create_bitmap(800,600);
-    perso.perso2 = load_bitmap("perso2_milieu.bmp", NULL);
-
-
-
-    int x[10],y[10];
-
+void position_depart_traversee(t_rondin * rondin, t_personnage_traversee* perso){
     /***** position x rondins aléatoire *****/
     for(int i = 0; i < 10; i++){
-        rondin.rondin_x[i] = rand()% 750;
-        x[i] = rondin.rondin_x[i];
+        rondin->rondin_x[i] = rand()% 750;
+        rondin->x[i] = rondin->rondin_x[i];
     }
-
-
-
-    /***** background *****/
-    BITMAP* background = create_bitmap(800, 600);
-    background = load_bitmap("vfond1.bmp", NULL);
-
-
     /***** position de départ *****/
-    perso.perso2_x = 400;
-    perso.perso2_y = 530;
-    perso.perso1_x = 360;
-    perso.perso1_y = 530;
-
+    perso->perso2_x = 400;
+    perso->perso2_y = 530;
+    perso->perso1_x = 360;
+    perso->perso1_y = 530;
 
     /***** position y rondins *****/
-    rondin.rondin_y[0] = 490;
-    y[0] = 490;
+    rondin->rondin_y[0] = 490;
+    rondin->y[0] = 490;
     for(int i = 1; i < 10; i++){
-        rondin.rondin_y[i]= rondin.rondin_y[i-1] - 40 ;
-        y[i] =  rondin.rondin_y[i];
+        rondin->rondin_y[i]= rondin->rondin_y[i-1] - 40 ;
+        rondin->y[i] =  rondin->rondin_y[i];
     }
+}
 
+void deplacer_joueur_traversee( t_personnage_traversee * perso){
+    if(key[KEY_UP]){
+        perso->perso2_y = perso->perso2_y - 40;
+    }
+    if(key[KEY_SPACE]){
+        perso->perso1_y = perso->perso1_y - 40;
+    }
+}
 
+void deplacer_rondin(t_rondin * rondin){
+    for(int i = 0; i < 10; i ++){
+        if(rondin->rondin_x[i] < 750){
+            rondin->vitesse = rondin->vitesse + rondin->acceleration;
+            rondin->rondin_x[i] = rondin->rondin_x[i] + rondin->vitesse ;
+            rondin->x[i] = rondin->rondin_x[i];
+        }
+        if(rondin->rondin_x[i] >= 750){
+            rondin->rondin_x[i] = 0;
+            rondin->x[i] = rondin->rondin_x[i];
+            rondin->vitesse = 10;
+            rondin->acceleration = 2;
+        }
+    }
+}
 
+void affichage_traversee (t_rondin * rondin, t_personnage_traversee* perso, BITMAP* buffer){
+    BITMAP * background = load_bitmap("vfond1.bmp", NULL);
+    clear_bitmap(buffer);
+    stretch_sprite(buffer, background, 0, 0, SCREEN_W, SCREEN_H);
+    for (int i = 0; i < 8; i++) {
+        stretch_sprite(buffer, rondin->wood, rondin->rondin_x[i], rondin->rondin_y[i], rondin->wood->w / 4,rondin->wood->h / 4);
+        rectfill(buffer,rondin->x[i] + 22, rondin->y[i] + 22,rondin->x[i]  + rondin->wood->w/4 - 24, rondin->y[i] + rondin->wood->h/4 - 26, makecol(255,0,0));
+    }
+    stretch_sprite(buffer, perso->perso1, perso->perso1_x, perso->perso1_y, perso->perso1->w / 4,perso->perso1->h / 4);
+    stretch_sprite(buffer, perso->perso2, perso->perso2_x, perso->perso2_y, perso->perso1->w / 4,perso->perso1->h / 4);
+    blit(buffer, screen, 0, 0, 0, 0, SCREEN_W, SCREEN_H);
+    rest(1000);
+}
 
-    int vitesse = 10;
-    int acceleration = 10;
+void victoire_traversee(t_personnage_traversee* perso, BITMAP* buffer){
+    if (perso->perso2_y <= 170) {
+        textprintf_ex(buffer, font, 330, 85, makecol(255, 255, 255), -1, "joueur 2 a gagne");
+        blit(buffer, screen, 0, 0, 0, 0, SCREEN_W, SCREEN_H);
+        rest(10);
+        rest(100000);
+    }
+    if (perso->perso1_y <= 170) {
+        textprintf_ex(buffer, font, 330, 85, makecol(255, 255, 255), -1, "joueur 1 a gagne");
+        blit(buffer, screen, 0, 0, 0, 0, SCREEN_W, SCREEN_H);
+        rest(10);
+        rest(100000);
+    }
+}
 
+void charger_bitmap_traverse (t_rondin * rondin, t_personnage_traversee* perso){
+    rondin->wood = create_bitmap(800, 600);
+    rondin->wood = load_bitmap( "rondin.bmp", NULL);
+    perso->perso1 = create_bitmap(800,600);
+    perso->perso1 = load_bitmap("perso1_milieu.bmp", NULL);
+    perso->perso2 = create_bitmap(800,600);
+    perso->perso2 = load_bitmap("perso2_milieu.bmp", NULL);
+}
+
+void deplacement_rondin_joueur(t_rondin * rondin, t_personnage_traversee* perso, BITMAP * buffer){
+    for(int i = 0; i < 8; i++) {
+        if (rondin->rondin_y[i] == perso->perso1_y) {
+            int couleur_rectangle = getpixel(buffer, perso->perso1_x, perso->perso1_y);
+            if(!getr(couleur_rectangle)){
+                textprintf_ex(buffer, font, 330, 85, makecol(0, 0, 0), -1, "joueur 1 a perdu ");
+            }
+            else{
+                perso->perso1_x = rondin->x[i];
+            }
+        }
+    }
+    for(int i = 0; i < 8; i++){
+        if(rondin->rondin_y[i] == perso->perso2_y )  {
+            int couleur_rectangle = getpixel(buffer, perso->perso2_x, perso->perso2_y);
+            if(!getr(couleur_rectangle)){
+                textprintf_ex(buffer, font, 330, 85, makecol(0, 0, 0), -1, "joueur 1 a perdu ");
+            }
+            else{
+                perso->perso2_x =rondin->x[i];
+
+            }
+        }
+    }
+}
+
+void traversee(t_rondin * rondin, t_personnage_traversee* perso, BITMAP * buffer){
+
+    charger_bitmap_traverse (rondin, perso);
+    position_depart_traversee(rondin, perso);
+    rondin->vitesse = 10;
+    rondin->acceleration = 10;
+    buffer = create_bitmap(SCREEN_W, SCREEN_H);
 
     while(! key[KEY_ESC]){
 
-        /***** déplacement rondins *****/
-        for(int i = 0; i < 10; i ++){
-            if(rondin.rondin_x[i] < 750){
-                vitesse = vitesse + acceleration;
-                rondin.rondin_x[i] = rondin.rondin_x[i] + vitesse ;
-                x[i] = rondin.rondin_x[i];
-            }
-            if(rondin.rondin_x[i] >= 750){
-                rondin.rondin_x[i] = 0;
-                x[i] = rondin.rondin_x[i];
-                vitesse = 10;
-                acceleration = 2;
-            }
-        }
-
-
-
-
-        /***** déplacement joueur *****/
-        if(key[KEY_UP]){
-            perso.perso2_y = perso.perso2_y - 40;
-        }
-        if(key[KEY_SPACE]){
-            perso.perso1_y = perso.perso1_y - 40;
-        }
-
-
-        /***** déplacement joueur x rondins *****/
-
-        /*
-        int white = makecol(255, 255, 255);
-
-        for (int i = 0; i < SCREEN_W; i++) {
-            for (int j = 0; j < SCREEN_H; j++) {
-                int color = getpixel(screen, i, j);
-                if (color == white) {
-                    for(int k = 0; k < 8; k++){
-                            perso.perso1_x = rondin.rondin_x[k];
-
-                    }
-                }
-            }
-        }
-        /*
-        for(int i = 0; i < 10; i++){
-            if(rondin.rondin_y[i] == perso.perso1_y){
-                if(perso.perso1_x == rondin.rondin_x[i])  {
-                    perso.perso1_x = rondin.rondin_x[i];
-
-                }
-            }
-        }
-        for(int i = 0; i < 10; i++){
-            if(rondin.rondin_y[i] == perso.perso2_y){
-                if(perso.perso2_x == rondin.rondin_x[i]){
-                    perso.perso2_x = rondin.rondin_x[i];
-
-                }
-                if(perso.perso2_y != rondin.rondin_y[i]){
-                    perso.perso2_x = perso.perso2_x;
-                }
-            }
-        }*/
-
-
-
-        for(int i = 0; i < 8; i++){
-
-            //if(rondin.rondin_y[i] == perso.perso1_y  && perso.perso1_x + 160>= rondin.rondin_x[i] && perso.perso1_x  <= rondin.rondin_x[i] + rondin.wood->w)  {
-              //  perso.perso1_x = x[i] ;
-            //}
-
-
-            rectfill(screen,x[i] + 22, y[i] + 22,x[i]  + rondin.wood->w/4 - 24, y[i] + rondin.wood->h/4 - 26, makecol(255,255,255));
-
-            int couleur = getpixel(screen, perso.perso1_x + 160 , perso.perso1_y ); // lire le pixel à la position (x, y) du bitmap bmp
-            if (couleur == makecol(255, 255, 255)) { // comparer la couleur avec le blanc
-                // le joueur est sur un rectangle blanc
-                perso.perso1_x = x[i] ;
-            }
-            else {
-                // le joueur n'est pas sur un rectangle blanc
-            }
-
-            //if(perso.perso1_y + perso.perso1->w <= rondin.rondin_y[i] + rondin.wood->h && perso.perso1_y >= rondin.rondin_y[i] && perso.perso1_x + 160>= rondin.rondin_x[i] && perso.perso1_x  <= rondin.rondin_x[i] + rondin.wood->w)  {
-              //  perso.perso1_x = rondin.rondin_x[i];
-            //}
-            // distance entre le joueur et le rondin double
-           // int distance = sqrt ((perso.perso1_x - rondin.rondin_x[i]) * (perso.perso1_x - rondin.rondin_x[i]) + (perso.perso1_y - rondin.rondin_y[i]) * (perso.perso1_y - rondin.rondin_y[i]));
-
-// On vérifie si la distance est inférieure à la somme des rayons
-//if (distance < perso_r + rondin_r) { // Il y a collision // On peut faire quelque chose en conséquence, par exemple : // Afficher un message alfont_textout_centre_ex (screen, font, “Collision !”, SCREEN_W / 2, SCREEN_H / 2, makecol (255, 0, 0), -1); // Arrêter le jeu break; }
-
-
-
-
-        }
-        for(int i = 0; i < 8; i++){
-            if(rondin.rondin_y[i] == perso.perso2_y  && perso.perso2_x + 170 >= rondin.rondin_x[i] && perso.perso2_x  <= rondin.rondin_x[i] + rondin.wood->w)  {
-                perso.perso2_x = x[i];
-            }
-        }
-
-
-
-
-        /***** affichage *****/
-        clear_bitmap(screen);
-        stretch_sprite(screen, background,0, 0,SCREEN_W , SCREEN_H );
-        for(int i = 0; i < 8; i++){
-            stretch_sprite(screen, rondin.wood, rondin.rondin_x[i], rondin.rondin_y[i], rondin.wood->w/4, rondin.wood->h/4);
-            //rectfill(screen,x[i] + 22, y[i] + 22,x[i]  + rondin.wood->w/4 - 24, y[i] + rondin.wood->h/4 - 26, makecol(255,255,255));
-        }
-        stretch_sprite(screen,  perso.perso1, perso.perso1_x, perso.perso1_y,perso.perso1->w/4, perso.perso1->h/4);
-        stretch_sprite(screen,  perso.perso2, perso.perso2_x, perso.perso2_y,perso.perso1->w/4, perso.perso1->h/4);
-        rest(1000);
-
-
-        /***** victoire *****/
-        if(perso.perso2_y <= 170){
-            textprintf_ex(screen, font, 330, 85, makecol(255, 255, 255), -1, "joueur 2 a gagne");
-            rest(100000);
-        }
-        if(perso.perso1_y <= 170){
-            textprintf_ex(screen, font, 330, 85, makecol(255, 255, 255), -1, "joueur 1 a gagne");
-            rest(100000);
-        }
+        deplacer_rondin(rondin);
+        deplacer_joueur_traversee(perso);
+        deplacement_rondin_joueur(rondin, perso, buffer);
+        affichage_traversee (rondin, perso, buffer);
+        victoire_traversee(perso, buffer);
     }
-
-
 }
-
-
-
-
 
 int main() {
     allegro_init();
@@ -221,12 +162,11 @@ int main() {
     install_keyboard();
     install_mouse();
     srand(time(NULL));
+    t_rondin * rondin;
+    t_personnage_traversee * perso;
+    BITMAP * buffer = create_bitmap(SCREEN_W, SCREEN_H);
 
-    t_rondin rondin;
-    t_personnage perso;
-
-    create_rondin(rondin, perso);
-
-    destroy_bitmap(rondin.wood);
+    traversee(&rondin, perso, &buffer);
+    destroy_bitmap(rondin->wood);
     return 0;
 }END_OF_MAIN();
