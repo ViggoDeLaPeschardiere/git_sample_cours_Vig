@@ -9,7 +9,7 @@ typedef struct pokemons_jackpot{
     BITMAP * pokemon1;
     BITMAP * pokemon2;
     BITMAP * pokemon3;
-    int validation
+    int validation;
 }t_pokemon_jackpot;
 
 typedef struct generateur_tirage{
@@ -228,4 +228,4 @@ int main() {
     destroy_bitmap(pokemon->pokemon2);
     destroy_bitmap(pokemon->pokemon3);
     return 0;
-}END_OF_MAIN();
+}END_OF_MAIN()
