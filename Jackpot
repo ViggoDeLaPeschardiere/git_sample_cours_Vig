@@ -36,9 +36,7 @@ void deroulement_image_jackpot (t_pokemon_jackpot  * pokemon, BITMAP* buffer,  t
         rectfill(buffer,710 ,300 ,715,450 , makecol(7,22,153));
         circlefill(buffer,712,300,20,makecol(7,22,153));
         textprintf_ex(buffer, font, 20, 520, makecol(7, 22, 153), -1, "joueur %d", joueur->numJoueur);
-        textprintf_ex(buffer, font, 20, 550, makecol(7, 22, 153), -1, "nombre de tour :  %d", joueur->nbr_tour);
-        show_mouse(buffer);
-        blit(buffer, screen, 0, 0, 0, 0, SCREEN_W, SCREEN_H);
+        textprintf_ex(buffer, font, 20, 550, makecol(7, 22, 153), -1, "nombre de tour :  %d", joueur->nbr_tour);blit(buffer, screen, 0, 0, 0, 0, SCREEN_W, SCREEN_H);
         rest(100);
         clear_bitmap(buffer);
 
@@ -51,7 +49,6 @@ void deroulement_image_jackpot (t_pokemon_jackpot  * pokemon, BITMAP* buffer,  t
         circlefill(buffer,712,300,20,makecol(7,22,153));
         textprintf_ex(buffer, font, 20, 520, makecol(7, 22, 153), -1, "joueur %d", joueur->numJoueur);
         textprintf_ex(buffer, font, 20, 550, makecol(7, 22, 153), -1, "nombre de tour :  %d", joueur->nbr_tour);
-        show_mouse(buffer);
         blit(buffer, screen, 0, 0, 0, 0, SCREEN_W, SCREEN_H);
         rest(100);
         clear_bitmap(buffer);
@@ -65,7 +62,6 @@ void deroulement_image_jackpot (t_pokemon_jackpot  * pokemon, BITMAP* buffer,  t
         circlefill(buffer,712,300,20,makecol(7,22,153));
         textprintf_ex(buffer, font, 20, 520, makecol(7, 22, 153), -1, "joueur %d", joueur->numJoueur);
         textprintf_ex(buffer, font, 20, 550, makecol(7, 22, 153), -1, "nombre de tour :  %d", joueur->nbr_tour);
-        show_mouse(buffer);
         blit(buffer, screen, 0, 0, 0, 0, SCREEN_W, SCREEN_H);
         rest(100);
         clear_bitmap(buffer);
@@ -75,10 +71,10 @@ void deroulement_image_jackpot (t_pokemon_jackpot  * pokemon, BITMAP* buffer,  t
 void detection_arret_jackpot (t_pokemon_jackpot  * pokemon, BITMAP* buffer){
 
 
-    if(mouse_b & 2 || mouse_b & 1) {
+    if(key[KEY_T]) {
         for(int i = 300; i < 450 ; i = i + 50){
             circlefill(buffer, 712, i, 20, makecol(7, 22, 153));
-            rest(1);
+            rest(5);
         }
         pokemon->validation  = 1;
     }
@@ -87,10 +83,6 @@ void detection_arret_jackpot (t_pokemon_jackpot  * pokemon, BITMAP* buffer){
 
 void generateur_3_images_jackpot (t_pokemon_jackpot  * pokemon, BITMAP* buffer,t_generateur_tirage * generateur, t_joueur_jackpot * joueur){
     BITMAP* background = load_bitmap("vfond1.bmp", NULL);
-
-
-
-
 
     if(pokemon->validation  == 1){
 
@@ -119,7 +111,6 @@ void generateur_3_images_jackpot (t_pokemon_jackpot  * pokemon, BITMAP* buffer,t
         if (generateur->gen3 == 0){
             stretch_sprite(buffer, pokemon->pokemon1,SCREEN_W  - SCREEN_W/2.85 , SCREEN_H - SCREEN_H/2,pokemon->pokemon1->w/6 , pokemon->pokemon1->h/6 );
         }
-
         if (generateur->gen3 == 1){
             stretch_sprite(buffer, pokemon->pokemon2,SCREEN_W  - SCREEN_W/2.85 , SCREEN_H - SCREEN_H/2,pokemon->pokemon1->w/6 , pokemon->pokemon1->h/6 );
         }
@@ -155,6 +146,7 @@ t_generateur_tirage *rempli_generateur(){
 
 void resultat_tirage_jackpot (t_pokemon_jackpot  * pokemon, BITMAP* buffer, t_generateur_tirage  * generateur, t_joueur_jackpot * joueur){
 
+
     if(pokemon->validation  == 2) {
         if (generateur->gen1 == generateur->gen2 && generateur->gen1 == generateur->gen3 && generateur->gen2 == generateur->gen3) {
             textprintf_ex(buffer, font, SCREEN_W - SCREEN_W / 1.92, 450, makecol(7, 22, 153), -1, "gagne");
@@ -163,15 +155,11 @@ void resultat_tirage_jackpot (t_pokemon_jackpot  * pokemon, BITMAP* buffer, t_ge
         } else {
             textprintf_ex(buffer, font, SCREEN_W - SCREEN_W / 1.92, 450, makecol(7, 22, 153), -1, "perdu");
             blit(buffer, screen, 0, 0, 0, 0, SCREEN_W, SCREEN_H);
-            rest(10);
             //resultat = 1;
         }
-
-        joueur->nbr_tour +=1;
-        if(joueur->nbr_tour > 6){
-            joueur->numJoueur +=1;
-            joueur->nbr_tour = 1;
-        }
+        
+        textprintf_ex(buffer, font, 20, 520, makecol(7, 22, 153), -1, "joueur %d", joueur->numJoueur);
+        textprintf_ex(buffer, font, 20, 550, makecol(7, 22, 153), -1, "nombre de tour :  %d", joueur->nbr_tour);
         pokemon->validation = 3;
     }
 }
@@ -180,27 +168,29 @@ void resultat_tirage_jackpot (t_pokemon_jackpot  * pokemon, BITMAP* buffer, t_ge
 void jackpot(BITMAP* buffer){
 
     t_joueur_jackpot * joueur = malloc(sizeof(t_generateur_tirage));
-    joueur->nbr_tour = 1;
-    joueur->numJoueur = 1;
     t_pokemon_jackpot *pokemon=rempli();
     t_generateur_tirage *generateur=rempli_generateur();
 
     buffer = create_bitmap(SCREEN_W, SCREEN_H);
     pokemon->validation = 0;
+    joueur->numJoueur = 1;
 
-    while(!key[KEY_ESC]){
+    joueur->nbr_tour = 1;
 
-        deroulement_image_jackpot( pokemon, buffer, joueur);
-        detection_arret_jackpot (pokemon, buffer);
-        generateur_3_images_jackpot (pokemon, buffer, generateur, joueur);
-        resultat_tirage_jackpot ( pokemon, buffer, generateur, joueur);
+    while (joueur->numJoueur <= 2) {
+        deroulement_image_jackpot(pokemon, buffer, joueur);
+        detection_arret_jackpot(pokemon, buffer);
+        generateur_3_images_jackpot(pokemon, buffer, generateur, joueur);
+        resultat_tirage_jackpot(pokemon, buffer, generateur, joueur);
 
-        if(key[KEY_R]){
-            pokemon->validation=0;
-
+        if (key[KEY_R]) {
+            pokemon->validation = 0;
+            joueur->nbr_tour += 1;
         }
-        if(joueur->numJoueur == 3 ){
-            pokemon->validation = 3;
+
+        if (joueur->nbr_tour > 5) {
+            joueur->numJoueur += 1;
+            joueur->nbr_tour = 1;
         }
     }
 }
@@ -215,11 +205,12 @@ int main() {
         exit(EXIT_FAILURE);
     }
     install_keyboard();
-    install_mouse();
+   // install_mouse();
     srand(time(NULL));
     t_pokemon_jackpot * pokemon;
     BITMAP* buffer = create_bitmap(SCREEN_W, SCREEN_H);
     t_generateur_tirage * generateur;
+
 
     jackpot(&buffer);
     vsync();
