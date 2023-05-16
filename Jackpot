@@ -157,7 +157,7 @@ void resultat_tirage_jackpot (t_pokemon_jackpot  * pokemon, BITMAP* buffer, t_ge
             blit(buffer, screen, 0, 0, 0, 0, SCREEN_W, SCREEN_H);
             //resultat = 1;
         }
-        
+
         textprintf_ex(buffer, font, 20, 520, makecol(7, 22, 153), -1, "joueur %d", joueur->numJoueur);
         textprintf_ex(buffer, font, 20, 550, makecol(7, 22, 153), -1, "nombre de tour :  %d", joueur->nbr_tour);
         pokemon->validation = 3;
@@ -177,6 +177,9 @@ void jackpot(BITMAP* buffer){
 
     joueur->nbr_tour = 1;
 
+    for(int i = 5 ; i< 1000 ; i++){
+        circlefill(screen,534,201,i,makecol(35,101,128));
+    }
     while (joueur->numJoueur <= 2) {
         deroulement_image_jackpot(pokemon, buffer, joueur);
         detection_arret_jackpot(pokemon, buffer);
